@@ -60,7 +60,7 @@ ON `course_teacher`.`teacher_id` = `teachers`.`id`;
 SELECT DISTINCT `departments`.`name`, `teachers`.`name` AS `teacher_name`, `teachers`.`surname` AS `teacher_surname`
 FROM `teachers`
 JOIN `course_teacher`
-ON `course_teacher`.`teacher_id` = `teachers`.id
+ON `course_teacher`.`teacher_id` = `teachers`.`id`
 JOIN `courses`
 ON `course_teacher`.`course_id` = `courses`.`id`
 JOIN `degrees`
@@ -70,16 +70,18 @@ ON `departments`.`id` = `degrees`.`department_id`
 WHERE `departments`.`name` = 'Dipartimento di Matematica';
 ```
 
-##
+## 7. BONUS: Selezionare per ogni studente il numero di tentativi sostenuti per ogni esame, stampando anche il voto massimo. Successivamente, filtrare i tentativi con voto minimo 18
 
 ```sql
-SELECT DISTINCT MAX(`exam_student`.`vote`), `exam_student`.`student_id` AS `student_did_exam`
+SELECT DISTINCT `students`.`name` ,  `students`.`surname`,`courses`.`name`, COUNT(`exam_student`.`vote`) AS `number_exam_did` , MAX(`exam_student`.`vote`) AS `max_vote`
 FROM `students`
 JOIN `exam_student`
 ON `exam_student`.`student_id` = `students`.`id`
 JOIN `exams`
 ON `exam_student`.`exam_id` = `exams`.`id`
-GROUP BY `exam_student`.`exam_id`
-HAVING `exam_student`.`vote` >= 18 ;
-
+JOIN `courses`
+ON `courses`.`id` = `exams`.`course_id`
+GROUP BY `courses`.`id` , `exam_student`.`student_id`
+HAVING `max_vote` >= 18
+ORDER BY `students`.`name` , `students`.`surname` ASC;
 ```
